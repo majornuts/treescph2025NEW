@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
-import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
 import '../data/DataApi.dart';
 import '../data/FT.dart';
@@ -22,8 +22,7 @@ class ClusterMap extends StatefulWidget {
 class _ClusterMapState extends State<ClusterMap> {
   bool _dataLoaded = false;
   List<Marker> markers = [];
-  LatLng? _lastCameraPosition;
-  LatLng? _currentCameraPosition;
+  // LatLng? _currentCameraPosition;
 
   Future<FT> fetchdata() async {
     return await DataApi.fetchDataTreesParser();
@@ -85,15 +84,10 @@ class _ClusterMapState extends State<ClusterMap> {
                     ? FlutterMap(
                       options: MapOptions(
                         onMapEvent: (event) {
-                          setState(() {
-                            _currentCameraPosition = event.camera.center;
-                          });
+                          // setState(() {
+                          //   // _currentCameraPosition = event.camera.center;
+                          // });
 
-                          if (event.source == MapEventSource.dragStart) {
-                            setState(() {
-                              _lastCameraPosition = _currentCameraPosition;
-                            });
-                          }
                           mapProvider.setCameraPosition(event.camera.center);
                           mapProvider.setLatitude(event.camera.center.latitude);
                           mapProvider.setLongitude(
