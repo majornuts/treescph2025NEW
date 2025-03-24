@@ -4,6 +4,8 @@ import 'package:treescph2025/screens/About.dart';
 import 'package:treescph2025/screens/ClusterMap.dart';
 import 'package:treescph2025/screens/HeatMap2.dart';
 import 'package:treescph2025/utils/Utils.dart';
+import 'package:treescph2025/utils/fab.dart';
+
 import 'data/DataApi.dart';
 import 'data/FT.dart';
 
@@ -127,16 +129,47 @@ class _TabBarExampleState extends State<TabBarExample>
           ],
         ),
       ),
-      body: TabBarView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _tabController,
-        children: <Widget>[
-          ClusterMap(
-            filteredData: filteredData
-
+      body: Stack(
+        children: [
+          TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _tabController,
+            children: <Widget>[
+              ClusterMap(filteredData: filteredData),
+              HeatMap2(filteredData: filteredData),
+              About(),
+            ],
           ),
-          HeatMap2(filteredData: filteredData),
-          About(),
+          Positioned(
+            bottom: 16.0, // Adjust as needed
+            right: 16.0, // Adjust as needed
+            child: ExpandableFab(
+              distance: 112.0,
+              children: [
+                ActionButton(
+                  onPressed: () {
+                    // Handle action 1
+                    print('Action 1 pressed');
+                  },
+                  icon: const Icon(Icons.location_off),
+                ),
+                ActionButton(
+                  onPressed: () {
+                    // Handle action 2
+                    print('Action 2 pressed');
+                  },
+                  icon: const Icon(Icons.navigation_outlined),
+                ),
+                ActionButton(
+                  onPressed: () {
+                    // Handle action 3
+                    print('Action 3 pressed');
+                  },
+                  icon: const Icon(Icons.edit_location_alt_outlined),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -191,4 +224,3 @@ class _TabBarExampleState extends State<TabBarExample>
     );
   }
 }
-
