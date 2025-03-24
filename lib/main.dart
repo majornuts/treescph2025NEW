@@ -60,6 +60,7 @@ class _TabBarExampleState extends State<TabBarExample>
   }
 
   List<String> filteredData = [];
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -95,12 +96,48 @@ class _TabBarExampleState extends State<TabBarExample>
     _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: ExpandableFab(
+        distance: 112.0,
+        children: [
+          ActionButton(
+            onPressed: () {
+              // Handle action 1
+              print('Action 1 pressed');
+            },
+            icon: const Icon(Icons.location_off, color: Colors.white),
+          ),
+          ActionButton(
+            onPressed: () {
+              // Handle action 2
+              print('Action 2 pressed');
+            },
+            icon: const Icon(Icons.navigation_outlined, color: Colors.white),
+          ),
+          ActionButton(
+            onPressed: () {
+              setState(() {
+                _tabController.animateTo(0);
+                _searchFocusNode.requestFocus();
+              });
+            },
+            icon: const Icon(Icons.search, color: Colors.white),
+          ),
+          ActionButton(
+            onPressed: () {
+              // Handle action 3
+              print('Action 3 pressed');
+            },
+            icon: const Icon(Icons.edit_location_alt_outlined, color: Colors.white),
+          ),
+        ],
+      ),
       appBar: AppBar(
         centerTitle: true,
         title: AnimatedSwitcher(
@@ -140,36 +177,6 @@ class _TabBarExampleState extends State<TabBarExample>
               About(),
             ],
           ),
-          Positioned(
-            bottom: 16.0, // Adjust as needed
-            right: 16.0, // Adjust as needed
-            child: ExpandableFab(
-              distance: 112.0,
-              children: [
-                ActionButton(
-                  onPressed: () {
-                    // Handle action 1
-                    print('Action 1 pressed');
-                  },
-                  icon: const Icon(Icons.location_off),
-                ),
-                ActionButton(
-                  onPressed: () {
-                    // Handle action 2
-                    print('Action 2 pressed');
-                  },
-                  icon: const Icon(Icons.navigation_outlined),
-                ),
-                ActionButton(
-                  onPressed: () {
-                    // Handle action 3
-                    print('Action 3 pressed');
-                  },
-                  icon: const Icon(Icons.edit_location_alt_outlined),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -204,6 +211,14 @@ class _TabBarExampleState extends State<TabBarExample>
         FocusNode focusNode,
         VoidCallback onFieldSubmitted,
       ) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (focusNode.hasFocus) {
+            textEditingController.selection = TextSelection(
+              baseOffset: textEditingController.text.length,
+              extentOffset: textEditingController.text.length,
+            );
+          }
+        });
         return TextField(
           controller: textEditingController,
           focusNode: focusNode,
