@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:treescph2025/screens/About.dart';
 import 'package:treescph2025/screens/ClusterMap.dart';
 import 'package:treescph2025/screens/HeatMap2.dart';
+import 'package:treescph2025/utils/Autocompleter.dart';
 import 'package:treescph2025/utils/Utils.dart';
 import 'package:treescph2025/utils/fab.dart';
 
@@ -19,7 +20,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
 }
 
 class TabBarExample extends StatefulWidget {
-  const TabBarExample({super.key});
+  const TabBarExample({Key? key}) : super(key: key);
 
   @override
   State<TabBarExample> createState() => _TabBarExampleState();
@@ -44,6 +45,25 @@ class _TabBarExampleState extends State<TabBarExample>
   late final TabController _tabController;
   String searchQuery = '';
   List<String> fullData = [];
+  List<String> filteredData = [];
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    _loadMarkerData();
+    _tabController.addListener(_handleTabChange);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabChange);
+    _tabController.dispose();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   Future<FT> fetchdata() async {
     return await DataApi.fetchDataTreesParser();
@@ -59,23 +79,10 @@ class _TabBarExampleState extends State<TabBarExample>
     });
   }
 
-  List<String> filteredData = [];
-  final FocusNode _searchFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
-    _loadMarkerData();
-    _tabController.addListener(_handleTabChange);
-  }
-
-  String _appBarTitle = '';
-
   void _handleTabChange() {
-    setState(() {
-      _appBarTitle = 'About';
-    });
+    if (_tabController.index == 0) {
+      _searchFocusNode.requestFocus();
+    }
   }
 
   void _onSearchChanged(String value) {
@@ -92,15 +99,6 @@ class _TabBarExampleState extends State<TabBarExample>
   }
 
   @override
-  void dispose() {
-    _tabController.removeListener(_handleTabChange);
-    _tabController.dispose();
-    _searchController.dispose();
-    _searchFocusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: ExpandableFab(
@@ -108,33 +106,30 @@ class _TabBarExampleState extends State<TabBarExample>
         children: [
           ActionButton(
             onPressed: () {
-              // Handle action 1
               print('Action 1 pressed');
             },
             icon: const Icon(Icons.location_off, color: Colors.white),
           ),
           ActionButton(
             onPressed: () {
-              // Handle action 2
               print('Action 2 pressed');
             },
             icon: const Icon(Icons.navigation_outlined, color: Colors.white),
           ),
           ActionButton(
             onPressed: () {
-              setState(() {
-                _tabController.animateTo(0);
-                _searchFocusNode.requestFocus();
-              });
+              _tabController.animateTo(0);
             },
             icon: const Icon(Icons.search, color: Colors.white),
           ),
           ActionButton(
             onPressed: () {
-              // Handle action 3
               print('Action 3 pressed');
             },
-            icon: const Icon(Icons.edit_location_alt_outlined, color: Colors.white),
+            icon: const Icon(
+              Icons.edit_location_alt_outlined,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -183,59 +178,12 @@ class _TabBarExampleState extends State<TabBarExample>
   }
 
   Widget _buildAppBarTitle() {
-    return _tabController.index == 2
-        ? Container(child: Text(_appBarTitle, textAlign: TextAlign.center))
-        : buildAutocomplete();
-  }
-
-  Autocomplete<String> buildAutocomplete() {
-    return Autocomplete<String>(
-      optionsBuilder: (TextEditingValue textEditingValue) {
-        if (textEditingValue.text == '') {
-          return const Iterable<String>.empty();
-        } else {
-          return fullData.where((String option) {
-            return option.toLowerCase().contains(
-              textEditingValue.text.toLowerCase(),
-            );
-          });
-        }
-      },
-      onSelected: (String selection) {
-        _onSearchChanged(selection);
-        _searchController.text = selection;
-      },
-      fieldViewBuilder: (
-        BuildContext context,
-        TextEditingController textEditingController,
-        FocusNode focusNode,
-        VoidCallback onFieldSubmitted,
-      ) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (focusNode.hasFocus) {
-            textEditingController.selection = TextSelection(
-              baseOffset: textEditingController.text.length,
-              extentOffset: textEditingController.text.length,
-            );
-          }
-        });
-        return TextField(
-          controller: textEditingController,
-          focusNode: focusNode,
-          decoration: InputDecoration(
-            hintText: 'Search... for a tree',
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                textEditingController.clear();
-                filteredData.clear();
-                _onSearchChanged('');
-              },
-            ),
-          ),
-          onChanged: _onSearchChanged,
-        );
-      },
+    return AutocompleteWidget(
+      fullData: fullData,
+      searchController: _searchController,
+      onSearchChanged: _onSearchChanged,
+      searchFocusNode: _searchFocusNode,
+      filteredData: filteredData,
     );
   }
 }

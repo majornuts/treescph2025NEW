@@ -19,9 +19,10 @@ class CustomMarker extends StatelessWidget {
               title: Text(element.properties.danskNavn),
               content: Text(
                 'Latin : ${element.properties.slaegt} \n'
-                    'Plante år : ${element.properties.planteaar} \n'
-                    'latitude : ${element.location.latitude} \nlongitude : ${element.location.longitude} \n'
-                    'id : ${element.properties.id} \n',
+                'Plante år : ${element.properties.planteaar} \n'
+                'latitude : ${element.location.latitude} \n'
+                'longitude : ${element.location.longitude} \n'
+                'id : ${element.properties.id} \n',
               ),
             );
           },
@@ -31,7 +32,6 @@ class CustomMarker extends StatelessWidget {
     );
   }
 }
-
 
 class MapProvider with ChangeNotifier {
   LatLng? _cameraPosition;
@@ -44,6 +44,7 @@ class MapProvider with ChangeNotifier {
   double get latitude => _latitude;
 
   double get longitude => _longitude;
+
   double get zoom => _cameraPositionZoom;
 
   void setCameraPosition(LatLng position) {
