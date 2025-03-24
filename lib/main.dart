@@ -53,12 +53,10 @@ class _TabBarExampleState extends State<TabBarExample>
     super.initState();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
     _loadMarkerData();
-    _tabController.addListener(_handleTabChange);
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     _searchController.dispose();
     _searchFocusNode.dispose();
@@ -77,12 +75,6 @@ class _TabBarExampleState extends State<TabBarExample>
     setState(() {
       fullData = uniqueData.toList();
     });
-  }
-
-  void _handleTabChange() {
-    if (_tabController.index == 0) {
-      _searchFocusNode.requestFocus();
-    }
   }
 
   void _onSearchChanged(String value) {
@@ -119,6 +111,7 @@ class _TabBarExampleState extends State<TabBarExample>
           ActionButton(
             onPressed: () {
               _tabController.animateTo(0);
+              _searchFocusNode.requestFocus();
             },
             icon: const Icon(Icons.search, color: Colors.white),
           ),

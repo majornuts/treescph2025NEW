@@ -22,53 +22,70 @@ class AutocompleteWidget extends StatefulWidget {
 class _AutocompleteWidgetState extends State<AutocompleteWidget> {
   @override
   Widget build(BuildContext context) {
-    return Autocomplete<String>(
-      optionsBuilder: (TextEditingValue textEditingValue) {
-        if (textEditingValue.text == '') {
-          return const Iterable<String>.empty();
-        } else {
-          return widget.fullData.where((String option) {
-            return option.toLowerCase().contains(
-              textEditingValue.text.toLowerCase(),
-            );
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: RawAutocomplete<String>(
+        focusNode: widget.searchFocusNode,
+        textEditingController: widget.searchController,
+        optionsBuilder: (TextEditingValue textEditingValue) {
+          return widget.filteredData.where((String option) {
+            return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
           });
-        }
-      },
-      onSelected: (String selection) {
-        widget.onSearchChanged(selection);
-        widget.searchController.text = selection;
-      },
-      fieldViewBuilder: (
-          BuildContext context,
-          TextEditingController textEditingController,
-          FocusNode focusNode,
-          VoidCallback onFieldSubmitted,
-          ) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (focusNode.hasFocus) {
-            textEditingController.selection = TextSelection(
-              baseOffset: textEditingController.text.length,
-              extentOffset: textEditingController.text.length,
-            );
-          }
-        });
-        return TextField(
-          controller: textEditingController,
-          focusNode: focusNode,
-          decoration: InputDecoration(
-            hintText: 'Search... for a tree',
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                textEditingController.clear();
-                widget.filteredData.clear();
-                widget.onSearchChanged('');
-              },
+        },
+        onSelected: (String selection) {
+          widget.searchController.text = selection;
+          widget.onSearchChanged(selection);
+        },
+        fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+          return TextField(
+            controller: textEditingController,
+            focusNode: focusNode,
+            onChanged: (value) {
+              widget.onSearchChanged(value);
+            },
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: 'Search tree',
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+              suffixIcon: widget.searchController.text.isNotEmpty
+                  ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  widget.searchController.clear();
+                  widget.onSearchChanged("");
+                },
+              )
+                  : null,
             ),
-          ),
-          onChanged: widget.onSearchChanged,
-        );
-      },
+          );
+        },
+        optionsViewBuilder: (BuildContext context, AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+          return Align(
+            alignment: Alignment.topLeft,
+            child: Material(
+              child: Container(
+                width: 300,
+                color: Colors.white,
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: options.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final String option = options.elementAt(index);
+                    return GestureDetector(
+                      onTap: () {
+                        onSelected(option);
+                      },
+                      child: ListTile(
+                        title: Text(option),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
