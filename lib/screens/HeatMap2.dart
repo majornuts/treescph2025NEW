@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../data/DataApi.dart';
 import '../data/FT.dart';
 import '../utils/Utils.dart';
+import '../utils/locationProvider.dart';
 
 class HeatMap2 extends StatefulWidget {
   final List<String> filteredData;
