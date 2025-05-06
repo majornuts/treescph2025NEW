@@ -9,9 +9,7 @@ import '../data/FT.dart';
 
 class CustomMarker extends StatelessWidget {
   final Features element;
-
   const CustomMarker(this.element, {super.key});
-
   void _launchMap(double latitude, double longitude) async {
     String url;
     url =
@@ -28,7 +26,6 @@ class CustomMarker extends StatelessWidget {
       }
     } else if (Platform.isIOS) {
       MapsLauncher.launchCoordinates(latitude, longitude);
-      // url = 'https://maps.apple.com/?q=$latitude,$longitude';
     }
   }
 
