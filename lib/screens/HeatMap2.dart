@@ -92,11 +92,7 @@ class _HeatMap2State extends State<HeatMap2> {
                         _currentCameraPosition = event.camera.center;
                       });
 
-                      if (event.source == MapEventSource.dragStart) {
-                        setState(() {
-                          _lastCameraPosition = _currentCameraPosition;
-                        });
-                      }
+
                       mapProvider.setCameraPosition(event.camera.center);
                       mapProvider.setLatitude(event.camera.center.latitude);
                       mapProvider.setLongitude(event.camera.center.longitude);

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/FT.dart';
@@ -13,26 +14,23 @@ class CustomMarker extends StatelessWidget {
 
   void _launchMap(double latitude, double longitude) async {
     String url;
+    url =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     if (Platform.isAndroid) {
-      url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-    } else if (Platform.isIOS) {
-      url = 'https://maps.apple.com/?q=$latitude,$longitude';
-    } else {
-      // Handle other platforms or provide a fallback URL
-      url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-    }
-
-    try {
-      if (await canLaunchUrl(Uri.parse(url))) {
-        await launchUrl(Uri.parse(url));
-      } else {
-        throw 'Could not launch maps';
+      try {
+        if (await canLaunchUrl(Uri.parse(url))) {
+          await launchUrl(Uri.parse(url));
+        } else {
+          throw 'Could not launch maps';
+        }
+      } catch (e) {
+        print("Error launching map: $e");
       }
-    } catch (e) {
-      print("Error launching map: $e");
+    } else if (Platform.isIOS) {
+      MapsLauncher.launchCoordinates(latitude, longitude);
+      // url = 'https://maps.apple.com/?q=$latitude,$longitude';
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +47,18 @@ class CustomMarker extends StatelessWidget {
                 children: [
                   Text(
                     'Latin : ${element.properties.slaegt} \n'
-                        'Plante år : ${element.properties.planteaar} \n'
-                        'latitude : ${element.location.latitude} \n'
-                        'longitude : ${element.location.longitude} \n'
-                        'id : ${element.properties.id} \n',
+                    'Plante år : ${element.properties.planteaar} \n'
+                    'latitude : ${element.location.latitude} \n'
+                    'longitude : ${element.location.longitude} \n'
+                    'id : ${element.properties.id} \n',
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      _launchMap(element.location.latitude,
-                          element.location.longitude);
+                      _launchMap(
+                        element.location.latitude,
+                        element.location.longitude,
+                      );
                     },
                     child: const Text('Open in Maps'),
                   ),
@@ -79,7 +79,6 @@ class CustomMarker extends StatelessWidget {
   }
 }
 
-
 class MapProvider with ChangeNotifier {
   LatLng? _cameraPosition;
   double _latitude = 55.6791235;
@@ -91,6 +90,7 @@ class MapProvider with ChangeNotifier {
   double get latitude => _latitude;
 
   double get longitude => _longitude;
+
   double get zoom => _cameraPositionZoom;
 
   void setCameraPosition(LatLng position) {

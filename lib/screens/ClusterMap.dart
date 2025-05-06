@@ -88,11 +88,7 @@ class _ClusterMapState extends State<ClusterMap> {
                             _currentCameraPosition = event.camera.center;
                           });
 
-                          if (event.source == MapEventSource.dragStart) {
-                            setState(() {
-                              _lastCameraPosition = _currentCameraPosition;
-                            });
-                          }
+
                           mapProvider.setCameraPosition(event.camera.center);
                           mapProvider.setLatitude(event.camera.center.latitude);
                           mapProvider.setLongitude(
