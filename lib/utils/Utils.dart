@@ -65,7 +65,6 @@ class CustomMarker extends StatelessWidget {
                   TextButton(
                     child: const Text('Close'),
                     onPressed: () {
-                      _launchMap(element.location.latitude, element.location.longitude);
                       Navigator.of(context).pop();
                     },
                   ),

@@ -4,6 +4,7 @@ import 'package:treescph2025/screens/About.dart';
 import 'package:treescph2025/screens/ClusterMap.dart';
 import 'package:treescph2025/screens/HeatMap2.dart';
 import 'package:treescph2025/utils/Utils.dart';
+
 import 'data/DataApi.dart';
 import 'data/FT.dart';
 
@@ -130,10 +131,7 @@ class _TabBarExampleState extends State<TabBarExample>
         physics: const NeverScrollableScrollPhysics(),
         controller: _tabController,
         children: <Widget>[
-          ClusterMap(
-            filteredData: filteredData
-
-          ),
+          ClusterMap(filteredData: filteredData),
           HeatMap2(filteredData: filteredData),
           About(),
         ],
@@ -190,4 +188,3 @@ class _TabBarExampleState extends State<TabBarExample>
     );
   }
 }
-

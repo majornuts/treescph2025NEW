@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import "package:flutter_map_heatmap/flutter_map_heatmap.dart" ;
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,6 @@ class HeatMap2 extends StatefulWidget {
 
 class _HeatMap2State extends State<HeatMap2> {
   bool _dataLoaded = false;
-  LatLng? _lastCameraPosition;
   LatLng? _currentCameraPosition;
 
   Future<FT> fetchdata() async {
@@ -120,6 +120,8 @@ class _HeatMap2State extends State<HeatMap2> {
                     TileLayer(
                       urlTemplate:
                           "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      userAgentPackageName:
+                      'dk.mfi.treehugger.treescph2025',
                     ),
                     if (data.isNotEmpty)
                       HeatMapLayer(
@@ -127,6 +129,7 @@ class _HeatMap2State extends State<HeatMap2> {
                           data: data,
                         ),
                       ),
+                    CurrentLocationLayer(),
                   ],
                 )
                 : const Center(child: CircularProgressIndicator());

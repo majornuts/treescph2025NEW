@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
-import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
 import '../data/DataApi.dart';
 import '../data/FT.dart';
@@ -22,7 +22,6 @@ class ClusterMap extends StatefulWidget {
 class _ClusterMapState extends State<ClusterMap> {
   bool _dataLoaded = false;
   List<Marker> markers = [];
-  LatLng? _lastCameraPosition;
   LatLng? _currentCameraPosition;
 
   Future<FT> fetchdata() async {
@@ -118,6 +117,8 @@ class _ClusterMapState extends State<ClusterMap> {
                         TileLayer(
                           urlTemplate:
                               'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName:
+                              'dk.mfi.treehugger.treescph2025',
                         ),
                         MarkerClusterLayerWidget(
                           options: MarkerClusterLayerOptions(
@@ -144,6 +145,7 @@ class _ClusterMapState extends State<ClusterMap> {
                             },
                           ),
                         ),
+                        CurrentLocationLayer(),
                       ],
                     )
                     : const Center(
