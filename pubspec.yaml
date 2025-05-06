@@ -38,6 +38,7 @@ dependencies:
   flutter_map_heatmap: ^0.0.8
   latlong2: ^0.9.1
   flutter_launcher_icons: ^0.14.3
+  url_launcher: ^6.2.1
 
 flutter_launcher_icons:
   #  image_path: "assets/images/icon-128x128.png"
